@@ -1,0 +1,23 @@
+{
+  "name": "purescript-benchmark",
+  "homepage": "https://github.com/cyrbon/purescript-benchmark",
+  "description": "Straightforward Benchmark.js support for purescript",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/cyrbon/purescript-benchmark"
+  },
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "output",
+    "test",
+    "bower.json",
+    "package.json"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^3.0.0",
+    "purescript-st": "^3.0.0"
+  }
+}
