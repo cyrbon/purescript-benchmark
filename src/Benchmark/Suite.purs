@@ -7,6 +7,7 @@ module Benchmark.Suite
   , freezeST
   , runST
   , pureST
+  , mutate
   ) where
 
 import Prelude
@@ -39,3 +40,11 @@ foreign import runST :: forall e.
 
 pureST :: (forall s e. Eff (st :: ST.ST s | e) (STSuite s)) -> Suite
 pureST f = runPure (runST f)
+
+mutate :: forall b. (forall s e. STSuite s -> Eff (st :: ST.ST s | e) b)
+  -> Suite
+  -> Suite
+mutate f suiteST = pureST do
+  s <- thawST suiteST
+  _ <- f s
+  pure s
