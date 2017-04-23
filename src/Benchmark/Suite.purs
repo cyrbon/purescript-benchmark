@@ -6,10 +6,12 @@ module Benchmark.Suite
   , thawST
   , freezeST
   , runST
+  , pureST
   ) where
 
+import Prelude
 import Control.Monad.ST as ST
-import Control.Monad.Eff (Eff)
+import Control.Monad.Eff (Eff, runPure)
 import Benchmark.Suite.ST (STSuite)
 
 foreign import data Suite :: Type
@@ -34,3 +36,6 @@ freezeST = _copy
 -- | The rank-2 type prevents the map from escaping the scope of `runST`.
 foreign import runST :: forall e.
   (forall h. Eff (st :: ST.ST h | e) (STSuite h)) -> Eff e Suite
+
+pureST :: (forall s e. Eff (st :: ST.ST s | e) (STSuite s)) -> Suite
+pureST f = runPure (runST f)
