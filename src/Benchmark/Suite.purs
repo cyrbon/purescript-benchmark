@@ -14,6 +14,8 @@ import Prelude
 import Control.Monad.ST as ST
 import Control.Monad.Eff (Eff, runPure)
 import Benchmark.Suite.ST (STSuite)
+import Benchmark.Suite.ST as STS
+import Unsafe.Coerce (unsafeCoerce)
 
 foreign import data Suite :: Type
 
@@ -48,3 +50,6 @@ mutate f suiteST = pureST do
   s <- thawST suiteST
   _ <- f s
   pure s
+
+runSuite :: forall s e. Suite -> Eff (st :: ST.ST s | e) Unit
+runSuite suite = STS.run (unsafeCoerce suite)
