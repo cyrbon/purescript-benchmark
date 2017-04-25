@@ -8,6 +8,7 @@ module Benchmark.Suite.Monad
   -- API Wrappers
   , add
   , on
+  , run
   ) where
 
 import Prelude
@@ -89,3 +90,9 @@ on :: forall s m e.
 on evName cb = do
   s <- ask
   liftEff $ STS.on s (toString evName) cb
+
+-- | Runs the suite.
+run :: forall s  m e. SuiteM s m e (m Unit)
+run = do
+  s <- ask
+  liftEff $ STS.run s
