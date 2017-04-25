@@ -7,6 +7,7 @@ module Benchmark.Suite.Monad
   , runSuiteT
   -- API Wrappers
   , add
+  , on
   ) where
 
 import Prelude
@@ -14,12 +15,13 @@ import Control.Monad.ST as ST
 import Control.Monad.Reader (runReaderT, ReaderT, class MonadReader, ask)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Class (class MonadEff, liftEff)
+import Data.Newtype (class Newtype)
+import Unsafe.Coerce (unsafeCoerce)
+
+import Benchmark.Event (toString, BenchmarkEventName)
 import Benchmark.Suite.ST as STS
 import Benchmark.Suite.ST (STSuite)
 import Benchmark.Suite (Suite, pureST)
-import Data.Newtype (class Newtype)
-import Unsafe.Coerce (unsafeCoerce)
-import Control.Applicative ((*>))
 
 -- Types
 --------------------
@@ -81,3 +83,9 @@ asksSTSuiteA3 fA3 a2 a3 = do
 add :: forall s m e. SuiteM s m e (String -> Eff e Unit -> m Unit)
 add = asksSTSuiteA3 STS.add
 
+-- | Registers a listener for the specified event type(s).
+on :: forall s m e.
+  SuiteM s m e (BenchmarkEventName -> (STS.BenchmarkEvent -> Eff e Unit) -> m Unit)
+on evName cb = do
+  s <- ask
+  liftEff $ STS.on s (toString evName) cb
