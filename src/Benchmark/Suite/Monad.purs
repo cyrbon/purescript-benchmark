@@ -29,7 +29,7 @@ import Benchmark.Suite.Immutable as Immutable
 -- Types
 --------------------
 
-type SuiteM s m e a =
+type SuiteM s e m a =
   MonadReader (STSuite s) m => MonadEff (st :: ST.ST s | e) m => a
 
 newtype SuiteT s e a = SuiteT (ReaderT (STSuite s) (Eff e) a)
@@ -64,7 +64,7 @@ runSuiteT (SuiteT m) = pureST do
 -- | that uses SuiteM
 asksSTSuiteA2 :: forall s m e a2 b.
      (STSuite s -> a2 -> Eff ( st :: ST.ST s | e ) b)
-  -> a2 -> (SuiteM s m e (m b))
+  -> a2 -> (SuiteM s e m (m b))
 asksSTSuiteA2 fA2 a2 = do
   s <- ask
   liftEff $ fA2 s a2
@@ -73,7 +73,7 @@ asksSTSuiteA2 fA2 a2 = do
 -- | `f` that uses SuiteM
 asksSTSuiteA3 :: forall s m e a2 a3 b.
      (STSuite s -> a2 -> a3 -> Eff ( st :: ST.ST s | e ) b)
-  -> (SuiteM s m e (a2 -> a3 -> m b))
+  -> (SuiteM s e m (a2 -> a3 -> m b))
 asksSTSuiteA3 fA3 a2 a3 = do
   s <- ask
   liftEff $ fA3 s a2 a3
@@ -83,12 +83,12 @@ asksSTSuiteA3 fA3 a2 a3 = do
 
 -- | Adds a test to the benchmark suite. Takes a name to identify the benchmark,
 -- | and the test to benchmark.
-add :: forall s m e anyEff a. SuiteM s m e (String -> Eff anyEff a -> m Unit)
+add :: forall s m e anyEff a. SuiteM s e m (String -> Eff anyEff a -> m Unit)
 add = asksSTSuiteA3 STS.add
 
 -- | Registers a listener for the specified event type(s).
 on :: forall s m e.
-  SuiteM s m e (BenchmarkEventName -> (STS.BenchmarkEvent -> Eff e Unit) -> m Unit)
+  SuiteM s e m (BenchmarkEventName -> (STS.BenchmarkEvent -> Eff e Unit) -> m Unit)
 on evName cb = do
   s <- ask
   liftEff $ STS.on s (toString evName) cb
@@ -97,7 +97,7 @@ on evName cb = do
 -- | `runSuiteM` instead, because SuiteM is usually used to construct the suite
 -- | and then once the suite is constructed it's run using `runSuiteM`. Using
 -- | `run` will run the suite during the construction process.
-run :: forall s m e. SuiteM s m e (m Unit)
+run :: forall s m e. SuiteM s e m (m Unit)
 run = do
   s <- ask
   liftEff $ STS.run s
