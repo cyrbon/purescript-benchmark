@@ -9,6 +9,7 @@ module Benchmark.Suite.Monad
   , add
   , on
   , run
+  , runSuiteM
   ) where
 
 import Prelude
@@ -23,6 +24,7 @@ import Benchmark.Event (toString, BenchmarkEventName)
 import Benchmark.Suite.ST as STS
 import Benchmark.Suite.ST (STSuite)
 import Benchmark.Suite (Suite, pureST)
+import Benchmark.Suite.Immutable as Immutable
 
 -- Types
 --------------------
@@ -91,8 +93,20 @@ on evName cb = do
   s <- ask
   liftEff $ STS.on s (toString evName) cb
 
--- | Runs the suite.
-run :: forall s  m e. SuiteM s m e (m Unit)
+-- | Runs the suite. This can be used inside SuiteM.
+run :: forall s m e. SuiteM s m e (m Unit)
 run = do
   s <- ask
   liftEff $ STS.run s
+
+-- | Runs SuiteM transformer stack. This is equal to executing `suite.run()`,
+-- | where suite is constructed via the monad interface:
+-- | >>> runSuiteM $ do
+-- | >>>   add "functionOne" myFunction
+-- | >>>   add "functionTwo" myFunctionTwo
+-- |
+-- | The code above will construct a suite with two functions to benchmark and
+-- | run those benchmarks.
+runSuiteM :: forall s e a.
+  SuiteT s (st :: ST.ST s | e ) a -> Eff (st :: ST.ST s | e ) Unit
+runSuiteM m = Immutable.runSuite $ runSuiteT m
