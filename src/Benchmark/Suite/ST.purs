@@ -9,8 +9,8 @@ foreign import data BenchmarkEvent :: Type
 
 foreign import new :: forall h r. Eff (st :: ST h | r) (STSuite h)
 
-foreign import add :: forall a b h e.
-  STSuite h -> String -> (Eff e Unit) -> Eff (st :: ST h | e) Unit
+foreign import add :: forall s e anyEff a.
+  STSuite s -> String -> (Eff anyEff a) -> Eff (st :: ST s | e) Unit
 
 foreign import run :: forall h e. STSuite h -> Eff (st :: ST h | e) Unit
 

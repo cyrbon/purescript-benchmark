@@ -83,7 +83,7 @@ asksSTSuiteA3 fA3 a2 a3 = do
 
 -- | Adds a test to the benchmark suite. Takes a name to identify the benchmark,
 -- | and the test to benchmark.
-add :: forall s m e. SuiteM s m e (String -> Eff e Unit -> m Unit)
+add :: forall s m e anyEff a. SuiteM s m e (String -> Eff anyEff a -> m Unit)
 add = asksSTSuiteA3 STS.add
 
 -- | Registers a listener for the specified event type(s).

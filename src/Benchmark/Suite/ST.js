@@ -39,3 +39,16 @@ exports.on = function(suite) {
     };
   };
 }
+
+// Benchmark.Suite.prototype.on(type, listener)
+exports.on2 = function(suite) {
+  return function(type) {
+    return function(listener) {
+      return function() {
+	suite.on(type, function(e) {
+	  listener(e)();
+	});
+      };
+    };
+  };
+}
