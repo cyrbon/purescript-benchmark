@@ -93,7 +93,10 @@ on evName cb = do
   s <- ask
   liftEff $ STS.on s (toString evName) cb
 
--- | Runs the suite. This can be used inside SuiteM.
+-- | Runs the suite. This can be used inside SuiteM. Most often, you want to use
+-- | `runSuiteM` instead, because SuiteM is usually used to construct the suite
+-- | and then once the suite is constructed it's run using `runSuiteM`. Using
+-- | `run` will run the suite during the construction process.
 run :: forall s m e. SuiteM s m e (m Unit)
 run = do
   s <- ask
