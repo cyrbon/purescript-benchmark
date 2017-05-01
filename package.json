@@ -5,7 +5,8 @@
     "build": "pulp build --censor-lib --strict"
   },
   "dependencies": {
-    "benchmark": "^2.1.4"
+    "benchmark": "^2.1.4",
+    "purescript-console": "^3.0.0"
   },
   "devDependencies": {
     "pulp": "^9.0.1",

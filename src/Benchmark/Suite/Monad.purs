@@ -57,6 +57,18 @@ runSuiteT (SuiteT m) = pureST do
   _ <- unsafeCoerce $ eff
   pure s
 
+-- | Runs SuiteM transformer stack. This is equal to executing `suite.run()`,
+-- | where suite is constructed via the monad interface:
+-- | >>> runSuiteM $ do
+-- | >>>   add "functionOne" myFunction
+-- | >>>   add "functionTwo" myFunctionTwo
+-- |
+-- | The code above will construct a suite with two functions to benchmark and
+-- | run those benchmarks.
+runSuiteM :: forall s e a.
+  SuiteT s (st :: ST.ST s | e ) a -> Eff (st :: ST.ST s | e ) Unit
+runSuiteM m = Immutable.runSuite $ runSuiteT m
+
 -- Internal helpers
 --------------------
 
@@ -87,8 +99,8 @@ add :: forall s m e anyEff a. SuiteM s e m (String -> Eff anyEff a -> m Unit)
 add = asksSTSuiteA3 STS.add
 
 -- | Registers a listener for the specified event type(s).
-on :: forall s m e.
-  SuiteM s e m (BenchmarkEventName -> (STS.BenchmarkEvent -> Eff e Unit) -> m Unit)
+on :: forall s m e anyEff.
+  SuiteM s e m (BenchmarkEventName -> (STS.BenchmarkEvent -> Eff anyEff Unit) -> m Unit)
 on evName cb = do
   s <- ask
   liftEff $ STS.on s (toString evName) cb
@@ -101,15 +113,3 @@ run :: forall s m e. SuiteM s e m (m Unit)
 run = do
   s <- ask
   liftEff $ STS.run s
-
--- | Runs SuiteM transformer stack. This is equal to executing `suite.run()`,
--- | where suite is constructed via the monad interface:
--- | >>> runSuiteM $ do
--- | >>>   add "functionOne" myFunction
--- | >>>   add "functionTwo" myFunctionTwo
--- |
--- | The code above will construct a suite with two functions to benchmark and
--- | run those benchmarks.
-runSuiteM :: forall s e a.
-  SuiteT s (st :: ST.ST s | e ) a -> Eff (st :: ST.ST s | e ) Unit
-runSuiteM m = Immutable.runSuite $ runSuiteT m

@@ -14,5 +14,5 @@ foreign import add :: forall s e anyEff a.
 
 foreign import run :: forall h e. STSuite h -> Eff (st :: ST h | e) Unit
 
-foreign import on :: forall a b h e.
-  STSuite h -> String -> (BenchmarkEvent -> Eff e Unit) -> Eff (st :: ST h | e) Unit
+foreign import on :: forall h e anyEff.
+  STSuite h -> String -> (BenchmarkEvent -> Eff anyEff Unit) -> Eff (st :: ST h | e) Unit
