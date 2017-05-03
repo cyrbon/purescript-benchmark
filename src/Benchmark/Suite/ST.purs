@@ -7,6 +7,9 @@ import Control.Monad.ST (ST)
 foreign import data STSuite :: Type -> Type
 foreign import data BenchmarkEvent :: Type
 
+-- API
+--------------------
+
 foreign import new :: forall h r. Eff (st :: ST h | r) (STSuite h)
 
 foreign import add :: forall s e anyEff a.
@@ -16,3 +19,11 @@ foreign import run :: forall h e. STSuite h -> Eff (st :: ST h | e) Unit
 
 foreign import on :: forall h e anyEff.
   STSuite h -> String -> (BenchmarkEvent -> Eff anyEff Unit) -> Eff (st :: ST h | e) Unit
+
+-- Extra
+--------------------
+
+foreign import data BenchmarkResult :: Type
+
+foreign import accumulateResults :: forall s e anyEff.
+  STSuite s -> (Array BenchmarkResult -> Eff anyEff Unit) -> Eff (st :: ST s | e) Unit

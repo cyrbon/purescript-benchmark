@@ -52,3 +52,17 @@ exports.on2 = function(suite) {
     };
   };
 }
+
+exports.accumulateResults = function(suite){
+  return function(cb){
+    return function(){
+      var results = [];
+      suite.on("cycle", function(e){
+	results.push(e.target);
+      });
+      suite.on("complete", function(e){
+	cb(results)();
+      });
+    };
+  };
+};

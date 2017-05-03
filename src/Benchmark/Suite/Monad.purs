@@ -9,6 +9,7 @@ module Benchmark.Suite.Monad
   , add
   , on
   , run
+  , accumulateResults
   , runSuiteM
   ) where
 
@@ -22,7 +23,7 @@ import Unsafe.Coerce (unsafeCoerce)
 
 import Benchmark.Event (toString, BenchmarkEventName)
 import Benchmark.Suite.ST as STS
-import Benchmark.Suite.ST (STSuite)
+import Benchmark.Suite.ST (STSuite, BenchmarkResult)
 import Benchmark.Suite (Suite, pureST)
 import Benchmark.Suite.Immutable as Immutable
 
@@ -76,7 +77,7 @@ runSuiteM m = Immutable.runSuite $ runSuiteT m
 -- | that uses SuiteM
 asksSTSuiteA2 :: forall s m e a2 b.
      (STSuite s -> a2 -> Eff ( st :: ST.ST s | e ) b)
-  -> a2 -> (SuiteM s e m (m b))
+  -> (SuiteM s e m (a2 -> m b))
 asksSTSuiteA2 fA2 a2 = do
   s <- ask
   liftEff $ fA2 s a2
@@ -104,6 +105,12 @@ on :: forall s m e anyEff.
 on evName cb = do
   s <- ask
   liftEff $ STS.on s (toString evName) cb
+
+-- | Accumulates results of each cycle in an array. `onComplete` calls the
+-- | provided callback with the array containing accumulated results.
+accumulateResults :: forall s m e anyEff.
+  SuiteM s e m ((Array BenchmarkResult -> Eff anyEff Unit) -> m Unit)
+accumulateResults = asksSTSuiteA2 STS.accumulateResults
 
 -- | Runs the suite. This can be used inside SuiteM. Most often, you want to use
 -- | `runSuiteM` instead, because SuiteM is usually used to construct the suite
