@@ -3,6 +3,7 @@ module Benchmark.Suite.ST where
 import Prelude (Unit)
 import Control.Monad.Eff (Eff)
 import Control.Monad.ST (ST)
+import Data.Newtype
 
 foreign import data STSuite :: Type -> Type
 foreign import data BenchmarkEvent :: Type
@@ -23,7 +24,12 @@ foreign import on :: forall h e anyEff.
 -- Extra
 --------------------
 
-foreign import data BenchmarkResult :: Type
+newtype BenchmarkResult = BenchmarkResult
+  { name :: String
+  , hz :: Number
+  }
+
+derive instance benchmarkResultNewtype :: Newtype BenchmarkResult _
 
 foreign import accumulateResults :: forall s e anyEff.
   STSuite s -> (Array BenchmarkResult -> Eff anyEff Unit) -> Eff (st :: ST s | e) Unit
