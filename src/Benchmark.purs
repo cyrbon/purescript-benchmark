@@ -14,3 +14,6 @@ import Prelude hiding (add)
 import Control.Monad.ST as ST
 import Control.Monad.Eff (Eff)
 
+runBench :: forall s m e a.
+  SuiteT s (st :: ST.ST s | e ) a -> Eff (st :: ST.ST s | e ) Unit
+runBench m = runSuiteM $ m *> printResultTableOnComplete
