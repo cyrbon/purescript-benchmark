@@ -17,7 +17,6 @@ import Benchmark.Suite.ST (STSuite)
 import Benchmark.Suite.ST as STS
 
 foreign import data Suite :: Type
-
 foreign import _copy :: forall a b h e. a -> Eff (st :: ST.ST h | e) b
 
 -- | Copy a mutable Suite

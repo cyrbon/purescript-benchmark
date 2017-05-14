@@ -52,29 +52,39 @@ printResultTableOnComplete = do
 		        { name: r^_.name
 	                , hz: unsafeToFixed 2 (r^_.hz)
 		        , percentage: strPercent $ r^_.hz
+	                , rme: (unsafeToFixed 2) (r^_.stats.rme)
 	                }
 	maxLenName = max $ (\s -> length $ s.name ) <$> resultRows
         maxLenHz = max $ (\s -> length $ s.hz ) <$> resultRows
         maxLenPercentage = max $ (\s -> length $ s.percentage ) <$> resultRows
+	rmeHeaderName = "+-(%)"
+        maxLenRme = let lenRme = max $ (\s -> length $ s.rme ) <$> resultRows
+			lenRmeHeaderName = length rmeHeaderName
+		    in
+                    if lenRme > lenRmeHeaderName then lenRme else lenRmeHeaderName
 
         nameHeader = fillSpace maxLenName "Name"
         hzHeader = fillSpace maxLenHz "Op/s"
-	percentageHeader = fillSpace maxLenPercentage "%"
+	percentageHeader = fillSpace maxLenPercentage "% max"
+	rmeHeader = fillSpace maxLenRme "+-(%)"
 
 	tableLine = "+" <> (createLine $ maxLenName + 2) <> "+" <> (createLine $ maxLenHz + 2)
                     <> "+" <> (createLine $ maxLenPercentage + 2) <> "+"
+		    <> (createLine $ maxLenRme + 2) <> "+"
 
-        genRow :: String -> String -> String -> String
-	genRow c1 c2 c3 = "| " <> c1 <> " | " <> c2 <> " | " <> c3 <> " |"
+        genRow :: String -> String -> String -> String -> String
+	genRow c1 c2 c3 c4 = "| " <> c1 <> " | " <> c2 <> " | " <> c3 <> " | "
+                             <> c4 <> " |"
 
     log tableLine
-    log $ genRow nameHeader hzHeader percentageHeader
+    log $ genRow nameHeader hzHeader percentageHeader rmeHeader
     log tableLine
 
     for_ resultRows $ \r -> do
       let nameCol = fillSpace maxLenName r.name
 	  hzCol = fillSpace maxLenHz r.hz
           percentageCol = fillSpace maxLenPercentage r.percentage
-      log $ genRow nameCol hzCol percentageCol
+          rmeCol = fillSpace maxLenRme r.rme
+      log $ genRow nameCol hzCol percentageCol rmeCol
 
     log tableLine

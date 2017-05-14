@@ -27,6 +27,9 @@ foreign import on :: forall h e anyEff.
 newtype BenchmarkResult = BenchmarkResult
   { name :: String
   , hz :: Number
+  , stats :: {
+      rme :: Number
+    }
   }
 
 derive instance benchmarkResultNewtype :: Newtype BenchmarkResult _
