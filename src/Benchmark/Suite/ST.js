@@ -3,7 +3,12 @@
 
 "use strict";
 
-var Benchmark = require('benchmark');
+var isBrowser = typeof window !== 'undefined'
+    && ({}).toString.call(window) === '[object Window]';
+
+// If it's a browser environment, then we skip require and assume that
+// Benchmark.js has been included as a script tag.
+var Benchmark = isBrowser ? window.Benchmark : require('benchmark');
 
 exports["new"] = function() {
   return new Benchmark.Suite();
