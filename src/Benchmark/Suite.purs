@@ -14,7 +14,6 @@ import Prelude
 import Control.Monad.ST as ST
 import Control.Monad.Eff (Eff, runPure)
 import Benchmark.Suite.ST (STSuite)
-import Benchmark.Suite.ST as STS
 
 foreign import data Suite :: Type
 foreign import _copy :: forall a b h e. a -> Eff (st :: ST.ST h | e) b
