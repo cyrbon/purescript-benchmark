@@ -10,7 +10,6 @@ import Control.Monad.Eff.Console (CONSOLE, log)
 import Control.Monad.Eff (Eff)
 import Data.Foldable (maximum)
 import Data.Traversable (for_, class Foldable)
-import Data.Newtype.Operator ((^))
 
 import Benchmark.Suite.Monad (SuiteM, on, accumulateResults)
 import Benchmark.Event (BenchmarkEventName(..))
@@ -43,16 +42,16 @@ printResultTableOnComplete = do
   accumulateResults $ \results -> do
     let max :: forall a f. Ord a => Foldable f => f a -> a
         max s = unsafePartial $ fromJust $ maximum s
-        highestHz = max $ (_^_.hz) <$> results
+        highestHz = max $ (_.hz) <$> results
         calcPercent n = n / highestHz * 100.0
 	strPercent n =
           let n' = calcPercent n
 	  in unsafeToFixed (if (round n') < 100 then 2 else 0) n'
         resultRows = flip map results $ \r ->
-		        { name: r^_.name
-	                , hz: unsafeToFixed 2 (r^_.hz)
-		        , percentage: strPercent $ r^_.hz
-	                , rme: (unsafeToFixed 2) (r^_.stats.rme)
+		        { name: r.name
+	                , hz: unsafeToFixed 2 (r.hz)
+		        , percentage: strPercent $ r.hz
+	                , rme: (unsafeToFixed 2) (r.stats.rme)
 	                }
 	maxLenName = max $ (\s -> length $ s.name ) <$> resultRows
         maxLenHz = max $ (\s -> length $ s.hz ) <$> resultRows
@@ -68,9 +67,10 @@ printResultTableOnComplete = do
 	percentageHeader = fillSpace maxLenPercentage "% max"
 	rmeHeader = fillSpace maxLenRme "+-(%)"
 
-	tableLine = "+" <> (createLine $ maxLenName + 2) <> "+" <> (createLine $ maxLenHz + 2)
-                    <> "+" <> (createLine $ maxLenPercentage + 2) <> "+"
-		    <> (createLine $ maxLenRme + 2) <> "+"
+	tableLine =    "+" <> (createLine $ maxLenName + 2)
+	            <> "+" <> (createLine $ maxLenHz + 2)
+                    <> "+" <> (createLine $ maxLenPercentage + 2)
+		    <> "+" <> (createLine $ maxLenRme + 2) <> "+"
 
         genRow :: String -> String -> String -> String -> String
 	genRow c1 c2 c3 c4 = "| " <> c1 <> " | " <> c2 <> " | " <> c3 <> " | "
