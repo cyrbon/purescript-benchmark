@@ -1,7 +1,7 @@
 {
   "name": "purescript-benchmark",
   "homepage": "https://github.com/cyrbon/purescript-benchmark",
-  "description": "Straightforward Benchmark.js support for purescript",
+  "description": "Simple to use, cross-platform benchmarking library based on benchmark.js",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
@@ -19,9 +19,11 @@
   "dependencies": {
     "purescript-prelude": "^3.0.0",
     "purescript-st": "^3.0.0",
-    "purescript-newtype-operator": "^1.0.0",
     "purescript-globals": "^3.0.0",
     "purescript-integers": "^3.0.0",
-    "purescript-strings": "^3.0.0"
+    "purescript-strings": "^3.0.0",
+    "purescript-unsafe-coerce": "^3.0.0",
+    "purescript-transformers": "^3.0.0",
+    "purescript-console": "^3.0.0"
   }
 }
