@@ -9,10 +9,11 @@ module Benchmark
   , fn
   ) where
 
-import Benchmark.Suite.Monad
+import Benchmark.Suite.Monad (SuiteM, SuiteT, accumulateResults, add, on, run,
+         runSuiteM, runSuiteT)
 import Benchmark.Suite (Suite) as Suite
 import Benchmark.Suite.ST (BenchmarkResult) as STModule
-import Benchmark.Output
+import Benchmark.Output (printResultOnCycle, printResultTableOnComplete)
 import Benchmark.Function (fn1)
 
 import Prelude (Unit, ($), (*>))
