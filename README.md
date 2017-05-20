@@ -13,6 +13,12 @@ The monadic interface exposes the `Suite` provided by `Benchmark.js`, making
 it simple to start with and extend, if you know `Benchmark.js`. Other primitives
 are built on top of that to provide easy-to-use end API.
 
+# Installation
+
+```
+bower install purescript-benchmark
+```
+
 # Usage
 
 Ready-to-clone environment with a full example can be found in
