@@ -13,13 +13,17 @@ The monadic interface exposes the `Suite` provided by `Benchmark.js`, making
 it simple to start with and extend, if you know `Benchmark.js`. Other primitives
 are built on top of that to provide easy-to-use end API.
 
-# Installation
+## Installation
 
 ```
 bower install purescript-benchmark
 ```
 
-# Usage
+## Documentation
+
+Module documentation is published on [Pursuit](https://pursuit.purescript.org/packages/purescript-benchmark/).
+
+## Usage
 
 Ready-to-clone environment with a full example can be found in
 [purescript-benchmark-template](https://github.com/cyrbon/purescript-benchmark-template).
@@ -53,7 +57,7 @@ This will print the following table:
 +-------------------+-------------+-------+-------+
 ```
 
-# Comparison to other libraries
+## Comparison to other libraries
 
 Compared to `purescript-benchotron`, it does not force you to use `QuickCheck`
 and provides a simpler API that exposes `Benchmark.js`'s primitives like Suite.
