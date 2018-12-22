@@ -6,8 +6,8 @@ module Benchmark.Output
   ) where
 
 import Prelude
-import Control.Monad.Eff.Console (CONSOLE, log)
-import Control.Monad.Eff (Eff)
+import Effect.Console (log)
+import Effect (Effect)
 import Data.Foldable (maximum)
 import Data.Traversable (for_, class Foldable)
 
@@ -21,23 +21,23 @@ import Partial.Unsafe (unsafePartial)
 import Data.String (length)
 
 -- | Runs `console.log(String(a))`
-foreign import toStringAndLog :: forall eff a.
-  a -> Eff (console :: CONSOLE | eff) Unit
+foreign import toStringAndLog :: forall a.
+  a -> Effect Unit
 
 foreign import fillSpace :: Int -> String -> String
 foreign import createLine :: Int -> String
 
 -- | Subscribes to Suite's `on("cycle"` event and outputs `String(event.target)`
 -- | to console.
-printResultOnCycle :: forall s e m.
-  SuiteM s e m (m Unit)
+printResultOnCycle :: forall s m.
+  SuiteM s m (m Unit)
 printResultOnCycle = do
   on Cycle $ \e -> toStringAndLog (unsafeCoerce e).target
 
 -- | Accumulate benchmark results on each cycle, and onComplete print a table
 -- | containing all results.
-printResultTableOnComplete :: forall s e m.
-  SuiteM s e m (m Unit)
+printResultTableOnComplete :: forall s m.
+  SuiteM s m (m Unit)
 printResultTableOnComplete = do
   accumulateResults $ \results -> do
     let max :: forall a f. Ord a => Foldable f => f a -> a

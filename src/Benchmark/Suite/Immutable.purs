@@ -10,13 +10,12 @@
 module Benchmark.Suite.Immutable where
 
 import Prelude (Unit)
-import Control.Monad.ST as ST
-import Control.Monad.Eff (Eff)
+import Effect (Effect)
 import Unsafe.Coerce (unsafeCoerce)
 
 import Benchmark.Suite (Suite)
 import Benchmark.Suite.ST as STS
 
 -- | Executes all benchmarks within the suite.
-runSuite :: forall s e. Suite -> Eff (st :: ST.ST s | e) Unit
+runSuite :: Suite -> Effect Unit
 runSuite suite = STS.run (unsafeCoerce suite)

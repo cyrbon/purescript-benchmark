@@ -17,20 +17,19 @@ import Benchmark.Output (printResultOnCycle, printResultTableOnComplete)
 import Benchmark.Function (fn1)
 
 import Prelude (Unit, ($), (*>))
-import Control.Monad.ST as ST
-import Control.Monad.Eff (Eff)
+import Effect (Effect)
 
--- | Runs the benchmark suite and print results. Use `fn` and `fnEff` inside the 
+-- | Runs the benchmark suite and print results. Use `fn` and `fnEff` inside the
 -- | monadic interface to add functions to the suite.
 -- | >>> runBench $ do
 -- | >>>   fn    "function name"     (_ + 40) 2
 -- | >>>   fnEff "eff function name" (log "eff function executed")
-runBench :: forall s e a.
-  SuiteT s (st :: ST.ST s | e ) a -> Eff (st :: ST.ST s | e ) Unit
+runBench :: forall s a.
+  SuiteT s a -> Effect Unit
 runBench m = runSuiteM $ m *> printResultTableOnComplete
 
-fnEff :: forall s m e anyEff a. SuiteM s e m (String -> Eff anyEff a -> m Unit)
+fnEff :: forall s m a. SuiteM s m (String -> Effect a -> m Unit)
 fnEff = add
 
-fn :: forall s m e a b. SuiteM s e m (String -> (a -> b) -> a -> m Unit)
+fn :: forall s m a b. SuiteM s m (String -> (a -> b) -> a -> m Unit)
 fn s f a = add s (fn1 f a)
